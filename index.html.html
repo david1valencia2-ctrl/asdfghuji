@@ -1,0 +1,120 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>El Cuarto de Control</title>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;600;700&display=swap">
+<style>
+:root{--bg:#3b3b3d;--card:#2c2c2e;--ink:#fff;--mute:#c4c4c8;--line:#5a5a5e;--acc:#2d8cf0;--acc-t:#1f3a5c;--grn:#4cd48a;--amb:#f4b942;--red:#ff7a70;color-scheme:dark;
+box-sizing:border-box;padding-top:env(safe-area-inset-top,0px);padding-bottom:env(safe-area-inset-bottom,0px)}
+@media (prefers-color-scheme:light){:root:not([data-theme="dark"]){--bg:#eceef2;--card:#fff;--ink:#1d2127;--mute:#555d68;--line:#c9ced6;--acc:#1565c0;--acc-t:#dbe9fb;--grn:#13804a;--amb:#9a6200;--red:#c4302b;color-scheme:light}}
+*,*::before,*::after{box-sizing:border-box}
+html{scroll-padding-top:env(safe-area-inset-top,0px)}
+body{margin:0;background:var(--bg);color:var(--ink);font:400 17px/1.55 Poppins,system-ui,sans-serif;overflow-x:hidden}
+.wrap{max-width:860px;margin:0 auto;padding:22px 16px 90px;position:relative}
+h1,h2,h3{margin:0;line-height:1.15;font-weight:700}
+.top{display:flex;align-items:center;gap:14px;margin-bottom:6px}
+.top svg{flex:none}
+h1{font-size:clamp(30px,7vw,48px)}
+.sub{color:var(--mute);margin:6px 0 18px}
+.dash{width:100%;height:36px;margin-bottom:6px;color:var(--ink);opacity:.8}
+.steps{display:grid;grid-template-columns:repeat(3,1fr);gap:10px;margin-bottom:18px}
+.step{border:2px solid var(--line);background:var(--card);color:var(--ink);border-radius:14px;padding:12px 8px;font:inherit;cursor:pointer;text-align:center;min-height:76px}
+.step b{display:block;font-size:22px}
+.step small{color:var(--mute);font-size:13px;line-height:1.3;display:block}
+.step[aria-selected="true"]{border-color:var(--acc);background:var(--acc-t)}
+.step.done b::after{content:" ✓";color:var(--grn)}
+.card{background:var(--card);border:2px solid var(--line);border-radius:18px;padding:20px}
+.prob{font-size:20px;font-weight:600;margin:6px 0 4px}
+.ask{color:var(--mute);margin:0 0 14px}
+.opts{display:grid;gap:12px}
+.opt{display:flex;gap:14px;align-items:center;text-align:left;width:100%;font:inherit;color:var(--ink);background:transparent;border:2px solid var(--line);border-radius:14px;padding:14px;cursor:pointer;min-height:68px}
+.opt:hover{border-color:var(--acc)}
+.opt i{flex:none;width:40px;height:40px;border-radius:50%;background:var(--acc);color:#fff;display:grid;place-items:center;font:700 18px Poppins,sans-serif;font-style:normal}
+.opt[aria-pressed="true"]{border-color:var(--acc);background:var(--acc-t)}
+:focus-visible{outline:3px solid var(--acc);outline-offset:2px}
+.opt:disabled{cursor:default;opacity:.5}.opt:disabled:hover{border-color:var(--line)}.opt[aria-pressed="true"]:disabled{opacity:1}.opt[aria-pressed="true"]:disabled:hover{border-color:var(--acc)}
+.res{margin-top:16px;border-radius:14px;padding:16px;border-left:8px solid var(--line);background:var(--bg)}
+.res.best{border-left-color:var(--grn)}.res.ok{border-left-color:var(--amb)}.res.no{border-left-color:var(--red)}
+.res h3{font-size:20px}.res.best h3{color:var(--grn)}.res.ok h3{color:var(--amb)}.res.no h3{color:var(--red)}
+.res p{margin:6px 0 12px}
+.facts{display:grid;grid-template-columns:repeat(auto-fit,minmax(150px,1fr));gap:10px}
+.facts div{border:2px dashed var(--line);border-radius:12px;padding:8px 10px}
+.facts span{display:block;font-size:13px;color:var(--mute)}.facts b{font-size:15px}
+.next{margin-top:16px;display:inline-flex;align-items:center;gap:10px;background:var(--acc);color:#fff;border:0;border-radius:999px;padding:12px 24px;font:600 17px Poppins,sans-serif;cursor:pointer}
+.next:hover{filter:brightness(1.1)}
+.fin{text-align:center}
+.fin h2{font-size:26px;margin:8px 0}
+.fin ul{list-style:none;padding:0;margin:14px 0;text-align:left;display:grid;gap:8px}
+.fin li{border:2px dashed var(--line);border-radius:12px;padding:10px 12px}
+.num{position:absolute;right:16px;bottom:14px;font:700 54px/1 Poppins,sans-serif;opacity:.9}
+.plus{position:absolute;right:10px;top:70px;opacity:.7;font:700 22px/1 Poppins}
+.data{background:var(--bg);border:2px dashed var(--line);border-radius:14px;padding:12px 16px;margin:12px 0}.data h3{font-size:16px;color:var(--acc);margin-bottom:4px}.data ul{margin:6px 0;padding-left:20px}.data li{margin:3px 0;font-size:15px}.hint{color:var(--mute);font-size:14px;margin:8px 0 0}.sp{display:block;color:var(--mute);font-size:14px;line-height:1.4}.opt span b{font-weight:600}
+.sum span{display:block}.sum .mu{color:var(--mute);font-size:14px}.sum b{color:var(--acc)}
+.fin .lec{text-align:left;margin-top:20px;font-size:19px}
+@media (max-width:520px){.step small{display:none}}
+</style>
+</head>
+<body>
+<div class="wrap">
+ <div class="top">
+  <svg width="64" height="64" viewBox="0 0 64 64" aria-hidden="true"><rect x="6" y="12" width="52" height="40" rx="16" fill="#fff"/><rect x="13" y="20" width="38" height="24" rx="11" fill="#111"/><circle cx="25" cy="31" r="4" fill="#2d8cf0"/><circle cx="39" cy="31" r="4" fill="#2d8cf0"/><path d="M28 38q4 3 8 0" stroke="#2d8cf0" stroke-width="2.5" fill="none" stroke-linecap="round"/><rect x="29" y="3" width="6" height="9" rx="3" fill="#fff"/></svg>
+  <h1>El Cuarto de Control</h1>
+ </div>
+ <p class="sub">Ustedes son los directores de Supply Chain y el presupuesto es limitado. En cada escenario elijan una solución y descubran si es buena decisión.</p>
+ <svg class="dash" viewBox="0 0 400 36" preserveAspectRatio="none" aria-hidden="true"><path d="M2 30 C80 -8 160 40 240 14 S360 4 398 20" fill="none" stroke="currentColor" stroke-width="3" stroke-dasharray="7 9" stroke-linecap="round"/></svg>
+ <div class="steps" id="steps" role="tablist"></div>
+ <div class="card" id="main"></div>
+ <span class="plus" aria-hidden="true">+ +</span>
+ <span class="num" aria-hidden="true">8</span>
+</div>
+<script>
+const S=[
+{k:"A",t:"Picking y espalda",p:"5% de errores en los pedidos y operarios con dolor de espalda.",
+ o:[
+ {n:"Luces y voz para guiar el picking",v:"ok",h:"Casi",w:"Baja los errores, pero no ayuda con la carga pesada. Las lesiones de espalda siguen.",f:["$60 k","$8 k por año","Menos de 1 año","Que el equipo no lo adopte"]},
+ {n:"Robots AMR que ayudan al picking, pagados como servicio (RaaS)",v:"best",h:"¡Buena decisión!",w:"El robot lleva la carga y guía al operario: bajan errores y esfuerzo físico. Al pagarlo como servicio no hay inversión inicial, que es justo lo que limita el presupuesto.",f:["$0","$60 k por año","Desde el primer año","Depender del proveedor y la ciberseguridad"]},
+ {n:"Sistema AS/RS completo (cubo de almacén)",v:"no",h:"Fuera de presupuesto",w:"Es potente, pero la inversión es enorme para el problema que tienen. Con presupuesto limitado no se justifica.",f:["Más de $900 k","$70 k por año","No se paga","Inversión muy alta"]}]},
+{k:"B",t:"Entrega médica rural",p:"Hay que llevar sangre y vacunas a una zona que queda a 5 horas por carretera.",
+ o:[
+ {n:"Dron multirrotor pequeño",v:"no",h:"No alcanza",w:"Es barato, pero vuela unos 10 km y a la vista del piloto. No llega a la comunidad.",f:["$40 k","$15 k por año","No cumple la meta","Alcance insuficiente"]},
+ {n:"Dron de ala fija con permiso BVLOS",v:"best",h:"¡Buena decisión!",w:"El ala fija vuela lejos con poca energía y entrega con paracaídas. BVLOS significa volar más allá de la vista del piloto: sin ese permiso no se puede operar tan lejos.",f:["$230 k (dron y permiso)","$70 k por año","Cerca de 3 años","Clima y trámites del permiso"]},
+ {n:"Dron VTOL híbrido",v:"ok",h:"Casi",w:"Despega vertical y lleva más carga, pero cuesta más. Funciona, aunque el ala fija da lo mismo por menos dinero.",f:["$310 k","$95 k por año","Unos 3,3 años","Costo, batería y mantenimiento"]}]},
+{k:"C",t:"Estantes de 12 metros",p:"Contar el inventario tarda 3 días y el personal trabaja en altura.",
+ o:[
+ {n:"Dron de interior con lectura RFID",v:"best",h:"¡Buena decisión!",w:"El dron cuenta de noche, sube a 12 metros sin riesgo para nadie y concilia con el WMS. Baja de 3 días a unas pocas horas.",f:["$90 k","$30 k por año","Cerca de 1 año","Precisión de lectura y seguridad del vuelo"]},
+ {n:"Más personal con plataformas elevadoras",v:"no",h:"No es buena idea",w:"No resuelve nada: sigue lento y aumenta el riesgo de caídas en altura.",f:["$25 k","$70 k por año","No se paga","Más riesgo en altura"]},
+ {n:"Lectores RFID fijos en todos los estantes",v:"ok",h:"Casi",w:"Funciona y es seguro, pero hay que instalar lectores en cada posición. Es más caro que el dron.",f:["$180 k","$15 k por año","Unos 3,3 años","Inversión alta"]}]}];
+const CASE={A:["Los errores de picking cuestan $150 k al año y las lesiones de espalda $90 k al año.","Hoy: 5% de errores y 8 lesiones por año.","Meta: errores de 1% o menos y máximo 2 lesiones.","Presupuesto: hasta $350 k de inversión inicial y $120 k de costo por año."],B:["La comunidad está a 80 km por carretera: 5 horas de viaje.","Se necesita llevar al menos 2 kg de carga y cubrir 60 km o más.","Volar más allá de la vista del piloto exige permiso BVLOS ($50 k, ya incluido en las opciones de ala fija y VTOL).","Presupuesto: hasta $400 k de inversión inicial y $130 k de costo por año."],C:["Estantes de 12 m: el conteo tarda 3 días, la exactitud es 92% y hay 120 horas de trabajo en altura al mes.","Meta: contar en menos de 1 día, 98% de exactitud y máximo 20 horas en altura.","Presupuesto: hasta $250 k de inversión inicial y $80 k de costo por año."]};
+const SPEC={A:["Guía cada pedido con luces y voz. No mueve la carga.","Lleva la carga y guía el picking. Contrato mensual.","Almacén automático de alta densidad. Requiere obra e instalación grandes."],B:["Alcance de unos 10 km, carga de 2 kg, vuelo a la vista del piloto.","Alcance de unos 80 km, carga de 2 kg, entrega con paracaídas, requiere BVLOS.","Alcance de unos 60 km, carga de 3 kg, despega vertical, requiere BVLOS."],C:["Cuenta de noche, llega a 12 m y no pone personas en altura.","Personas a 12 m con arnés y plataforma elevadora.","Un lector en cada posición, instalado en toda la estructura."]};
+const L=["Inversión inicial","Costo por año","Se paga en","Riesgo principal"];
+let cur=0,pick=[null,null,null],fin=false;
+const $=id=>document.getElementById(id);
+function render(){
+ $("steps").innerHTML=S.map((s,i)=>`<button class="step ${pick[i]!==null&&S[i].o[pick[i]].v==="best"?"done":""}" role="tab" aria-selected="${!fin&&i===cur}" data-s="${i}"><b>${s.k}</b><small>${s.t}</small></button>`).join("");
+ const m=$("main");
+ if(fin){
+  const ok=pick.filter((p,i)=>p!==null&&S[i].o[p].v==="best").length;
+  m.innerHTML=`<div class="fin"><h2>${ok===3?"¡Excelente, directores!":"¡Buen trabajo, directores!"}</h2><p>Acertaron ${ok} de 3 escenarios a la primera elección. Ahora defiendan su decisión ante el salón.</p><h3 class="lec">Resumen de sus decisiones</h3><ul class="sum">${S.map((s,i)=>{const o=pick[i]!==null?s.o[pick[i]]:null,b=s.o.find(x=>x.v==="best");return`<li><b>${s.k}. ${s.t}</b><span>Su elección: ${o?o.n+" · "+o.h:"sin elegir"}</span><span>Mejor opción: ${b.n}</span><span class="mu">Inversión ${b.f[0]} · Costo ${b.f[1]} · Se paga: ${b.f[2].toLowerCase()}</span></li>`}).join("")}</ul><h3 class="lec">Lo que nos llevamos</h3><ul class="sum"><li><b>CAPEX vs OPEX:</b> pagar como servicio (RaaS) cambia la inversión inicial por un gasto anual y baja la barrera de entrada.</li><li><b>Regulación:</b> el permiso BVLOS decide si un dron de largo alcance es viable. Forma parte de la inversión.</li><li><b>Payback y riesgo:</b> lo más barato no siempre es lo más rentable. Una solución debe cumplir el KPI y tener un riesgo manejable.</li></ul><p>Preparen 2 minutos: qué eligieron, cuánto cuesta y cuál es el riesgo.</p><button class="next" id="rs">Volver a empezar</button></div>`;
+  return;
+ }
+ const s=S[cur],p=pick[cur];
+ let h=`<h2 style="font-size:15px;color:var(--acc)">Escenario ${s.k}</h2><p class="prob">${s.p}</p><div class="data"><h3>Datos del caso</h3><ul>${CASE[s.k].map(x=>`<li>${x}</li>`).join("")}</ul><p class="hint">Pista: el payback es la inversión inicial dividida entre el ahorro neto por año.</p></div><p class="ask">¿Qué solución eligen?</p><div class="opts">`+
+  s.o.map((o,i)=>`<button class="opt" aria-pressed="${p===i}" data-o="${i}" ${p!==null?"disabled":""}><i>${"ABC"[i]}</i><span><b>${o.n}</b><small class="sp">${SPEC[s.k][i]}</small><small class="sp">Inversión ${o.f[0]} · Costo ${o.f[1]}</small></span></button>`).join("")+`</div>`;
+ if(p!==null){const o=s.o[p];
+  h+=`<div class="res ${o.v}" role="status"><h3>${o.h}</h3><p>${o.w}</p><div class="facts">${o.f.map((x,i)=>`<div><span>${L[i]}</span><b>${x}</b></div>`).join("")}</div></div>
+  <button class="next" id="nx">${cur<2?"Siguiente escenario ▸":"Ver resumen ▸"}</button>`;}
+ m.innerHTML=h;
+}
+document.addEventListener("click",e=>{
+ const a=e.target.closest("[data-s]"),b=e.target.closest("[data-o]");
+ if(a){cur=+a.dataset.s;fin=false;render()}
+ else if(b){if(pick[cur]!==null)return;pick[cur]=+b.dataset.o;render();const r=document.querySelector(".res");if(r)r.scrollIntoView({behavior:"smooth",block:"nearest"})}
+ else if(e.target.closest("#rs")){pick=[null,null,null];cur=0;fin=false;render();window.scrollTo({top:0,behavior:"smooth"})}
+ else if(e.target.closest("#nx")){if(cur<2)cur++;else fin=true;render();window.scrollTo({top:0,behavior:"smooth"})}
+});
+render();
+</script>
+</body>
+</html>
